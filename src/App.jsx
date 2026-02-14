@@ -1,12 +1,23 @@
-import Counter from "./Counter";
+import React from "react";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
+import Header from "./Components/Header";
+import { Outlet, Route, Routes } from "react-router";
+import Home from "./Pages/Home";
+import About from "./Pages/About";
+import Services from "./Pages/Services";
 
 export default function App() {
   return (
     <>
-      <div className="p-2 border-2 border-yellow-500">
-        <h1 className="text-[50px] p-3">This is main component.</h1>
-        <Counter />
-      </div>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="services" element={<Services />} />
+        <Route path="register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
     </>
   );
 }
