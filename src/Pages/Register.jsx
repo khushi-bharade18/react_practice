@@ -1,21 +1,34 @@
 import { useState } from "react";
-import { Link} from "react-router";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import EyeButton from "../Components/EyeButton";
+import SubmitButton from "../Components/SubmitButton";
 
 export default function Register() {
   const [showPass, setShowPass] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleFormSubmit(data) {
+    console.log(data);
+    reset();
   }
 
   return (
     <div className="bg-white shadow-lg rounded-2xl p-8 max-w-md m-auto mt-10">
       <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
-      <form className="space-y-5" method="post" onClick={handleSubmit}>
+      <form
+        className="space-y-5"
+        method="post"
+        onSubmit={handleSubmit(handleFormSubmit)}
+      >
         <div>
           <label
-            for="username"
+            htmlFor="username"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             User Name
@@ -23,15 +36,36 @@ export default function Register() {
           <input
             type="text"
             id="username"
-            name="username"
+            {...register("username", {
+              required: {
+                value: true,
+                message: "User name is required",
+              },
+              minLength: {
+                value: 2,
+                message: "Minimun length should be 2 letters",
+              },
+              maxLength: {
+                value: 15,
+                message: "Maximum length should be 2 letters",
+              },
+            })}
             placeholder="Enter your username"
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={
+              errors.username
+                ? "border-red-500 border w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                : "border w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            }
           />
+          {errors.username && (
+            <span className="text-red-500 text-xs">
+              {errors.username.message}
+            </span>
+          )}
         </div>
         <div>
           <label
-            for="email"
+            htmlFor="email"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Email
@@ -39,15 +73,30 @@ export default function Register() {
           <input
             type="email"
             id="email"
-            name="email"
+            {...register("email", {
+              required: {
+                value: true,
+                message: "Email is required",
+              },
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Enter valid email address",
+              },
+            })}
             placeholder="Enter your email"
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={
+              errors.email
+                ? "border-red-500 border w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                : "border w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            }
           />
+          {errors.email && (
+            <span className="text-red-500 text-xs">{errors.email.message}</span>
+          )}
         </div>
         <div className="relative">
           <label
-            for="password"
+            htmlFor="password"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Password
@@ -55,24 +104,37 @@ export default function Register() {
           <input
             type={showPass ? "text" : "password"}
             id="password"
-            name="password"
+            {...register("password", {
+              required: {
+                value: true,
+                message: "Password is required",
+              },
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters",
+              },
+              pattern: {
+                value: /^(?=.*[A-Z])(?=.*[0-9]).+$/,
+                message: "Must contain 1 uppercase and 1 number",
+              },
+            })}
             placeholder="Enter your password"
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={
+              errors.password
+                ? "border-red-500 border w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                : "border w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            }
           />
-          <button
-            className="absolute right-2 top-[50%] text-xl cursor-pointer active:bg-gray-200 rounded-full p-1"
-            onClick={() => setShowPass(!showPass)}
+          <EyeButton showPass={showPass} setShowPass={setShowPass} />
+          <span
+            className={
+              errors.password ? "text-red-500 text-xs" : "text-xs text-gray-700"
+            }
           >
-            {showPass ? <FaEye /> : <FaEyeSlash />}
-          </button>
+            Must contain 1 uppercase and 1 number
+          </span>
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 mt-4 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 active:scale-95"
-        >
-          Register
-        </button>
+        <SubmitButton />
         <p className="block text-sm font-medium text-gray-700 text-center">
           Already have an account?
           <Link to={"/login"} className="hover:underline">
